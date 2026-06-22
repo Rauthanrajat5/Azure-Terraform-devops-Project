@@ -9,19 +9,19 @@ pipeline{
 
     }
 
-}
 
-#clone a github repo inside a jenkins workspace
+
+// clone a github repo inside a jenkins workspace
 
 stages{
-    stage('chekout'){
+    stage('checkout'){
         steps{
             checkout scm
         }
 
     }
 
-#init
+// init
 
     stage('terraform init'){
         steps{
@@ -31,10 +31,10 @@ stages{
         }
     }
 
-#validate
+// validate
 
 
-    stage('terraform validate '){
+    stage('terraform validate'){
         steps{
             dir('env/dev'){
                 sh 'terraform validate'
@@ -42,25 +42,33 @@ stages{
         }
     }
 
-#plan
+// plan
 
      stage('terraform plan'){
         steps{
             dir('env/dev'){
-                sh 'terraform plan -out tfplan'
+                sh 'terraform plan -out=tfplan'
             }
         }
     }
 
-    #apply
+    stage('Approval') {
+    steps {
+        input message: 'Terraform plan has been generated. Do you want to apply it?'
+    }
+    }
+
+    // apply
 
     stage('terraform apply'){
         steps{
             dir('env/dev'){
-                sh 'terraform apply tfplan'
+                sh 'terraform apply -auto-approve tfplan'
             }
         }
     }
+    }
+
 
     post {
 
@@ -73,6 +81,5 @@ stages{
         }
 
     }
-
-}   
+    }
 
