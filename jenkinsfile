@@ -1,0 +1,78 @@
+pipeline{
+    agent any
+
+    environment{
+        ARM_CLIENT_ID = credentials('ARM_CLIENT_ID')
+        ARM_CLIENT_SECRET = credentials('ARM_CLIENT_SECRET')
+        ARM_SUBSCRIPTION_ID = credentials('ARM_SUBSCRIPTION_ID')
+        ARM_TENANT_ID = credentials('ARM_TENANT_ID')
+
+    }
+
+}
+
+#clone a github repo inside a jenkins workspace
+
+stages{
+    stage('chekout'){
+        steps{
+            checkout scm
+        }
+
+    }
+
+#init
+
+    stage('terraform init'){
+        steps{
+            dir('env/dev'){
+                sh 'terraform init'
+            }
+        }
+    }
+
+#validate
+
+
+    stage('terraform validate '){
+        steps{
+            dir('env/dev'){
+                sh 'terraform validate'
+            }
+        }
+    }
+
+#plan
+
+     stage('terraform plan'){
+        steps{
+            dir('env/dev'){
+                sh 'terraform plan -out tfplan'
+            }
+        }
+    }
+
+    #apply
+
+    stage('terraform apply'){
+        steps{
+            dir('env/dev'){
+                sh 'terraform apply tfplan'
+            }
+        }
+    }
+
+    post {
+
+        success {
+            echo 'Terraform deployment completed successfully.'
+        }
+
+        failure {
+            echo 'Terraform deployment failed.'
+        }
+
+    }
+
+}   
+
