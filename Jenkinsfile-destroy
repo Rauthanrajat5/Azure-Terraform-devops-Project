@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    environment{
+        ARM_CLIENT_ID = credentials('ARM_CLIENT_ID')
+        ARM_CLIENT_SECRET = credentials('ARM_CLIENT_SECRET')
+        ARM_SUBSCRIPTION_ID = credentials('ARM_SUBSCRIPTION_ID')
+        ARM_TENANT_ID = credentials('ARM_TENANT_ID')
+
+    }
+
+    stages{
+        stage('checkout'){
+            steps{
+                checkout scm
+
+
+            }
+        }
+
+        stage('terraform init'){
+            steps{
+                dir('env/dev'){
+                    sh 'terraform init'
+                }
+
+
+            }
+        }
+        stage('terraform plan destroy'){
+            steps{
+                dir('env/dev'){
+                    sh 'terraform plan -destroy -out=destroy.tfplan'
+                }
+            }
+            }
+
+            stage('Approval') {
+                steps {
+                    input 'Do you want to destroy all Azure resources?'
+                }
+                }
+
+            stage('terraform destroy'){
+                steps{
+                    dir('env/dev'){
+                        sh 'terraform apply destroy.tfplan'
+                    }
+                }
+            }
+    }
+    
+    }
