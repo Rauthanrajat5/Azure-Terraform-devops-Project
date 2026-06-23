@@ -10,6 +10,7 @@ resource "azurerm_subnet" "subnetdetails" {
   resource_group_name  = var.rg_det.name
   virtual_network_name = var.vnet_config.name
   address_prefixes     = var.subnet_config.address_prefixes
+  depends_on = [ azurerm_virtual_network.vnetdetails ]
 }
 
 resource "azurerm_network_security_group" "nsgdetails" {
