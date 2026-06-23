@@ -1,4 +1,5 @@
 resource "azurerm_key_vault" "keyvaultdetails" {
+  depends_on = [ module.resourcegroup ]
   name                        = local.vault_name
   location                    = var.rg_config.location
   resource_group_name         = local.name
@@ -21,7 +22,8 @@ resource "azurerm_key_vault" "keyvaultdetails" {
       "Get",
       "List",
       "Set",
-      "Delete"
+      "Delete",
+      "Purge"
     ]
 
     storage_permissions = [
@@ -40,12 +42,14 @@ resource "random_password" "randompass" {
 
 resource "azurerm_key_vault_secret" "username" {
   name         = "linux-admin-username"
-  value        = "azureaddmin"
+  value        = "azureadmin"
   key_vault_id = azurerm_key_vault.keyvaultdetails.id
+  depends_on = [ azurerm_key_vault.keyvaultdetails ]
 }
 
 resource "azurerm_key_vault_secret" "password" {
   name         = "linux-admin-password"
   value        = random_password.randompass.result
   key_vault_id = azurerm_key_vault.keyvaultdetails.id
+  depends_on = [ azurerm_key_vault.keyvaultdetails ]
 }
