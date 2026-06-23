@@ -19,6 +19,7 @@ module "networking" {
   linux_vm = {
     name = var.vm_config.name
   }
+  depends_on = [ module.resourcegroup ]
 }
 
 module "linux_vm" {
@@ -32,6 +33,7 @@ module "linux_vm" {
     admin_username       = azurerm_key_vault_secret.username.value
     admin_password       = azurerm_key_vault_secret.password.value
   }
+  depends_on = [ module.resourcegroup ]
 }
 
 module "storage" {
@@ -49,5 +51,6 @@ module "storage" {
     name                  = var.container_config.name
     container_access_type = var.container_config.container_access_type
   }
+  depends_on = [ module.resourcegroup ]
 }
 
