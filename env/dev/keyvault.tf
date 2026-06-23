@@ -25,6 +25,7 @@ resource "azurerm_key_vault_access_policy" "terraform_policy" {
     "List",
     "Set",
     "Delete",
+    "recover",
     "Purge"
   ]
 }
