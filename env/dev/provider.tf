@@ -14,3 +14,11 @@ terraform {
   }
 }
 
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "project-cicd-dev-rg"
+    storage_account_name = "rajatstorage4021"
+    container_name       = "container1"
+    key                  = "terraform.tfstate"
+  }
+}
